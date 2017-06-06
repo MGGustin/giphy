@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Giphy Homework!!</title>
+    <style>
+        #buttons{
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Assemble Rangers</h1>
+
+        <div id="buttons"></div>
+
+        <form id="ranger-form">
+        <label for="ranger-input">Pick A Ranger</label>
+        <input type="text" id="ranger-input"><br>
+
+        <input id="add-ranger" type="submit" value="Pick A Ranger">
+        </form>
+        
+        <div id="gifs"></div>
+
+    <script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script type="text/javascript">
+        
+     var prSeasons = ["Mighty Morphin Power Rangers", "Power Rangers Turbo", "Power Rangers Zeo", "Power Rangers in Space"];
+
+function rangerDisplay() {
+
+    var season = $(this).attr("data-ranger");
+    var queryURL = "http://api.giphy.com/v1/gifs/search?q=" +
+      season + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+        $.ajax({
+        url: queryURL,
+        method: "GET"
+      }).done(function(response) { 
+        
+        var results= response.data;
+
+        for (var i = 0; i < results.length; i++) {
+
+        var rating= results[i].rating;
+
+        var p= $("<p>").text("Rating:" + rating);
+
+        var rangerImage= $("<img>")
+
+        rangerImage.attr("src", results[i].images.original.url);
+
+        $("#gifs").append(p);
+
+        $("#gifs").prepend(rangerImage);
+
+        $("#gifs").prepend(JSON.stringify(response.content));
+        
+        renderButtons();
+        }
+     });
+    }
+function renderButtons() {
+
+    $("#buttons").empty();
+
+    for (var i = 0; i < prSeasons.length; i++) {
+
+    var a = $("<button>");
+    
+    a.addClass("power");
+    
+    a.attr("data-ranger", prSeasons[i]);
+    
+    a.text(prSeasons[i]);
+    
+    $("#buttons").append(a);
+    }
+}
+
+    
+    $("#add-ranger").on("click", function(event) {
+        event.preventDefault();
+
+    
+        var season = $("#ranger-input").val().trim();
+
+    
+        prSeasons.push(season);
+        console.log(prSeasons)
+        
+        renderButtons();
+    });
+
+        $(document).on("click", ".power", rangerDisplay)
+
+        renderButtons();
+
+    </script>
+  </div>
+</body>
+</html>
